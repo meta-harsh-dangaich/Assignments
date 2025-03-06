@@ -1,220 +1,219 @@
 import java.util.*;
 
+class Item {
+    private String itemId;
+    private String name;
+    private String description;// Camel case
+    private double price;
 
-class Item{
-private String ItemId;
-private String Name;
-private String Description;
-private double Price;
+    public Item(String itemId, String name, String des, double price) {
+        this.itemId = itemId;
+        this.name = name;
+        this.description = des;
+        this.price = price;
+    }
 
-public Item(String itemid,String name,String des,double price){
+    public double getPrice() {// Should be in pascal case
+        return price;
+    }
 
-this.ItemId=itemid;
-this.Name=name;
-this.Description=des;
-this.Price=price;
+    public String getItemId() {
+        return itemId;
+    }
 
-}
-
-public double getPrice(){
-return Price;
-}
-
-public String getitemid(){
-    return ItemId;
-}
-
-public String getName(){
-    return Name;
-}
+    public String getName() {
+        return name;
+    }
 
 }
 
-class ShoppingCart{
+// Class - ItemDetails
+// ItemDetails - Quantity
 
-private HashMap<Item,Integer>cart=new HashMap<Item,Integer>();
+class ShoppingCart {
 
+    private HashMap<Item, Integer> cart = new HashMap<Item, Integer>();
 
-public void addToCart(Item item,int quantity){
-if(quantity<=0){
-    System.out.println("Enter quantity greater than 0");
-    return;
-}
-boolean exist_item=cart.containsKey(item);
-if (exist_item == true){
-cart.put(item,cart.get(item)+quantity);
-}
-else{
-cart.put(item,quantity);
-}
-System.out.println(item.getName()+" "+"added to cart");
-
-}
-
-public int displayQty(Item item){
-if(cart.containsKey(item)==true)
-return cart.get(item);
-else
-return 0;
-}
-
-public void updateQty(Item item,int quantity){
-if(quantity<0){
-    System.out.println("Quantity should be positive");
-    return;
-}
-if(cart.containsKey(item)==false){
-    System.out.println("item not present in cart");
-    return;
-}
-int prevQty=cart.get(item);
-cart.put(item,prevQty+quantity);
-int updatedQty=prevQty+quantity;
-System.out.println(" updated Item"+item.getitemid()+" to "+ updatedQty );
-
-}
-
-public void deleteItem(Item item){
-
-if(cart.remove(item)!=null){
-System.out.println("item deleted");
-}
-
-else{
-System.out.println("item not present in cart");
-}
-}
-
-public double displayBill(){
-
-double total_bill=0;
-
-for (Map.Entry<Item,Integer> i : cart.entrySet()){
-int q=i.getValue();
-double p=i.getKey().getPrice();
-
-total_bill+=p*q;
-}
-return total_bill;
-}
-
-public void displayCart(){
-
-if(cart.isEmpty()==true){
-System.out.println("Cart is Empty");
-}
-
-else{
-System.out.println("Shopping Cart");
-for (HashMap.Entry<Item,Integer> i : cart.entrySet()){
-System.out.println(i.getKey().getitemid()+"- Quantity "+i.getValue());
-}
-System.out.println("Total bill"+" - "+displayBill());
-}
-}
-}
-
-public class Main{
-public static void main(String[] args){
-ShoppingCart cart=new ShoppingCart();
-Item item1=new Item("1","Apple","red colour",10);
-Item item2=new Item("2","Banana","yellow colour",5);
-Item item3=new Item("3","Oranges","orange colour",6);
-
-Scanner sc=new Scanner(System.in);
-
-HashMap<String,Item>items=new HashMap<>();
-items.put("1",item1);
-items.put("2",item2);
-items.put("3",item3);
-
-int choice;
-
-do{
-    System.out.println("Shopping Cart");
-    System.out.println("1. Add item to cart");
-    System.out.println("2. Display Cart");
-    System.out.println("3. Update item quantity");
-    System.out.println("4. Delete item ");
-    System.out.println("5. Total Bill");
-    System.out.println("6.Exit");
-    System.out.println("Enter Choice");
-    choice =sc.nextInt();
-    sc.nextLine();
-
-    switch(choice){
-        case 1:
-            System.out.println("Enter Item Id");
-            String itemId=sc.nextLine();
-            if(items.containsKey(itemId)==false){
-                System.out.println("Invalid id");
-                break;
-            }
-            
-            System.out.println("Enter Qty");
-            int qty=sc.nextInt();
-            cart.addToCart(items.get(itemId), qty);
-            break;
-        
-
-        case 2:
-            cart.displayCart();
-            break;
-
-        case 3:
-            System.out.println("Enter the itemid to update");
-            itemId=sc.nextLine();
-            if(items.containsKey(itemId)==false){
-                System.out.println("Invalid id");
-                break;
-            }
-            System.out.println("Enter new Quantity: ");
-            qty=sc.nextInt();
-            cart.updateQty(items.get(itemId), qty);
-            break;
-
-        case 4:
-            System.out.println("Enter itemid to remove");
-            itemId=sc.nextLine();
-            if(items.containsKey(itemId)==false){
-                System.out.println("Invalid id");
-                break;
-            }
-            cart.deleteItem(items.get(itemId));
-            break;
-
-        case 5:
-            System.out.println("Total Bill -" + cart.displayBill());
-            break;
-        
-        case 6:
-            System.out.println("Exit");
-            break;
-        
-        default:
-            System.out.println("Invalid Choice!");
+    public boolean addToCart(Item item, int quantity) {
+        if (quantity <= 0) {
+            return false;
         }
-    }while(choice!=6);
-        sc.close();
+        boolean exist_item = cart.containsKey(item);
+        if (exist_item == true) {
+            cart.put(item, cart.get(item) + quantity);
+        } else {
+            cart.put(item, quantity);
+        }
+        return true;
+
+    }
+
+    public int displayQty(Item item) {
+        if (cart.containsKey(item) == true)
+            return cart.get(item);
+        else
+            return 0;
+    }
+
+    public boolean updateQty(Item item, int quantity) {
+        if (quantity < 0) {
+            return false;
+        }
+        cart.put(item, quantity);
+        return true;
+
+    }
+
+    public boolean deleteItem(Item item) {
+
+        if (cart.remove(item) != null) {
+            return true;
+        }
+
+        else {
+            return false;
+        }
+    }
+
+    // improve display also
+    public double totalBill() {
+
+        double total_bill = 0;
+
+        for (Map.Entry<Item, Integer> i : cart.entrySet()) {
+            int q = i.getValue();
+            double p = i.getKey().getPrice();
+
+            total_bill += p * q;
+        }
+        return total_bill;
+    }
+
+    public HashMap<Item,Integer>getCartItems(){
+        return cart;
+    }
+
+    public boolean isCartEmpty(){
+        return cart.isEmpty();
     }
 }
 
+public class Main {
+    public static void main(String[] args) {
+        ShoppingCart cart = new ShoppingCart();
 
-/*cart.addToCart(item1,3);
-cart.displayCart();
-cart.addToCart(item2,4);
-System.out.println("Quantity of banana:"+cart.displayQty(item2));
-cart.updateQty(item1,2);
-cart.displayCart();
-cart.deleteItem(item2);
-cart.displayCart();
-cart.addToCart(item3,2);
+        Scanner sc = new Scanner(System.in);
+        Item item1 = new Item("1", "Apple", "red colour", 10);
+        Item item2 = new Item("2", "Banana", "yellow colour", 5);
+        Item item3 = new Item("3", "Oranges", "orange colour", 6);
 
-cart.displayCart();
+        HashMap<String, Item> items = new HashMap<>();
+        items.put("1", item1);
+        items.put("2", item2);
+        items.put("3", item3);
 
-System.out.println("Total bill"+" "+cart.displayBill());*/
+        int choice;
 
+        do {
+            System.out.println("************** ------- *************");
+            System.out.println("Shopping Cart");
+            System.out.println("1. Add item to cart");
+            System.out.println("2. Display Cart");
+            System.out.println("3. Update item quantity");
+            System.out.println("4. Delete item ");
+            System.out.println("5. Total Bill");
+            System.out.println("6.Exit");
+            System.out.println("************** ------- *************");
+            System.out.println("Enter Choice");
 
+            choice = sc.nextInt();
+            sc.nextLine();
 
+            switch (choice) {
+                case 1:
+                    System.out.println("Available Items");
+                    for(Item item:items.values()){
+                        System.out.println(item.getItemId()+" "+item.getName()+" "+item.getPrice());
+                    }
+                    System.out.println("Enter Item Id");
+                    String itemId = sc.nextLine();
+                    if (items.containsKey(itemId) == false) {
+                        System.out.println("Invalid id");
+                        break;
+                    }
+                    System.out.println("Enter Qty");
+                    int qty = sc.nextInt();
+                    if(cart.addToCart(items.get(itemId), qty))
+                    System.out.println(items.get(itemId).getName()+" added to cart ");
+                    else{
+                        System.out.println("Invalid ,must be greater than zero");
+                    }
+                    System.out.println("Press Any Number To Continue");
+                    sc.nextInt();
+                    break;
 
+                case 2:
+                    if(cart.isCartEmpty()){
+                        System.out.println("Cart is Empty");
+                    }
+                    else{
+                        System.out.println("Shopping Cart");
+                        for(Map.Entry<Item,Integer> entry:cart.getCartItems().entrySet()){
+                            System.out.println(entry.getKey().getItemId()+" - "+entry.getKey().getName()+" quantity : "+entry.getValue());
+                        }
+                        System.out.println("Total Bill: "+cart.totalBill());
+                    }
+                    System.out.println("Press Any Number To Continue");
+                    sc.nextInt();
+                    break;
+
+                case 3:
+                    System.out.println("Enter the itemid to update");
+                    itemId = sc.nextLine();
+                    if (items.containsKey(itemId) == false) {
+                        System.out.println("Invalid id");
+                        break;
+                    }
+                    System.out.println("Enter new Quantity: ");
+                    qty = sc.nextInt();
+                    if(cart.updateQty(items.get(itemId), qty)){
+                        System.out.println("updated "+items.get(itemId).getName()+" to quantity: "+qty);
+                    }
+                    else{
+                        System.out.println("Invalid quantity");
+                    }
+                    System.out.println("Press Any Number To Continue");
+                    sc.nextInt();
+                    break;
+
+                case 4:
+                    System.out.println("Enter itemid to remove");
+                    itemId = sc.nextLine();
+                    if (items.containsKey(itemId) == false) {
+                        System.out.println("Invalid id");
+                    }
+                    if(cart.deleteItem(items.get(itemId))==true){
+                        System.out.println("Item removed from cart. ");
+                    }
+                    System.out.println("Press Any Key To Continue");
+                    sc.nextInt();
+                    break;
+
+                case 5:
+                    System.out.println("Total Bill -" + cart.totalBill());
+                    System.out.println("Press Any Number To Continue");
+                    sc.nextInt();
+                    break;
+
+                case 6:
+                    System.out.println("Exit");
+                    break;
+
+                default:
+                    System.out.println("Invalid Choice!");
+            }
+        } while (choice != 6);
+        sc.close();
+    }
+}
 
